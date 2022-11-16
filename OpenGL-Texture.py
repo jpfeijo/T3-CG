@@ -166,8 +166,8 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(-5, 5,10, 
-    0, 0, 0,
+    gluLookAt(5, 5,7, 
+    0, 1, 0,
      0, 1.0, 0) 
  
 # **********************************************************************
@@ -241,14 +241,14 @@ def DesenhaCuboTex():
     glNormal3f(0,1,0)
     #Desenha parte de baixo do cubo
     glNormal3f(0,1,0)
-    glTexCoord(0,0)
-    glVertex3f(-0.5,  -0.5, -0.5)
-    glTexCoord(0,1)
-    glVertex3f(-0.5,  -0.5,  0.5)
-    glTexCoord(1,1)
-    glVertex3f( 0.5,  -0.5,  0.5)
     glTexCoord(1,0)
     glVertex3f( 0.5,  -0.5, -0.5)
+    glTexCoord(1,1)
+    glVertex3f( 0.5,  -0.5,  0.5)
+    glTexCoord(0,1)
+    glVertex3f(-0.5,  -0.5,  0.5)
+    glTexCoord(0,0)
+    glVertex3f(-0.5,  -0.5, -0.5)
     # # #Desenha parte de cima do cubo
     glNormal3f(0,1,0)
     glTexCoord(0,0)
@@ -284,9 +284,6 @@ def DesenhaCuboTex():
     glVertex3f(0.5,  -0.5, 0.5)
     glTexCoord(0,0)
     glVertex3f(0.5,  -0.5,  -0.5)
-    # glEnd()
-    # glColor3f(1,1,1)
-    # glBegin(GL_QUADS)
     # #Desenha parte da frente do cubo
     glNormal3f(0,0,1)
     glTexCoord(0,0)
@@ -344,7 +341,7 @@ def DesenhaMuro():
     glTranslated(0,-0.5,-20)
     for z in range(25):
         glPushMatrix()
-        for y in range(15):
+        for y in range(15):        
             UseTexture(0)
             DesenhaCuboTex()
             glTranslated(0,1,0)
@@ -375,9 +372,6 @@ def display():
     global Angulo
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-    glTranslate(2,3,0)
-    DesenhaCuboTex()
-    glTranslate(-2,-3,0)
     DefineLuz()
     PosicUser()
 
