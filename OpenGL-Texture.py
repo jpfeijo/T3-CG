@@ -32,7 +32,10 @@ import numpy as np
 from PIL import Image
 import time
 
-
+x_jogador = 5
+z_jogador = 7
+x_obs = 0
+y_obs = 0
 Texturas = []
 Angulo = 0.0
 # ***********************************************
@@ -159,6 +162,7 @@ def init():
 #
 # **********************************************************************
 def PosicUser():
+    global x_jogador, z_jogador, x_obs, y_obs
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity() 
@@ -166,8 +170,8 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(5, 5,7, 
-    0, 1, 0,
+    gluLookAt(x_jogador, 5, z_jogador, 
+    x_obs, y_obs, 0,
      0, 1.0, 0) 
  
 # **********************************************************************
@@ -442,7 +446,7 @@ def animate():
 # **********************************************************************
 ESCAPE = b'\x1b'
 def keyboard(*args):
-    global image
+    global image, x_obs, y_obs
     #print (args)
     # If escape is pressed, kill everything.
 
@@ -455,6 +459,17 @@ def keyboard(*args):
     if args[0] == b'i':
         image.show()
 
+    if args[0] == b'a':
+        x_obs-=1
+
+    if args[0] == b'd':
+        x_obs+=1
+    
+    if args[0] == b'w':
+        y_obs+=1
+
+    if args[0] == b's':
+        y_obs-=1
     # ForÃ§a o redesenho da tela
     glutPostRedisplay()
 
@@ -463,14 +478,15 @@ def keyboard(*args):
 # **********************************************************************
 
 def arrow_keys(a_keys: int, x: int, y: int):
+    global x_jogador, z_jogador
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        pass
+        z_jogador+=1
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        pass
+        z_jogador-=1
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        pass
+        x_jogador-=1
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        pass
+        x_jogador+=1
 
     glutPostRedisplay()
 
