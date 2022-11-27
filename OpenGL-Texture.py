@@ -32,10 +32,12 @@ import numpy as np
 from PIL import Image
 import time
 
-x_jogador = 5
-z_jogador = 7
-x_obs = 0
-y_obs = 0
+rotacaoXcanhao = 0
+rotacaoZcanhao = 0
+
+obs = Ponto(-2,2,4)
+alv = Ponto(0,0,0)
+aux = Ponto(0,0,0)
 Texturas = []
 Angulo = 0.0
 # ***********************************************
@@ -158,11 +160,12 @@ def init():
     global Texturas 
     Texturas += [LoadTexture("tijolos.jpg")] 
     Texturas += [LoadTexture("Grass.jpg")] 
+    Texturas += [LoadTexture("TexCanhao.jpg")]
 # **********************************************************************
 #
 # **********************************************************************
 def PosicUser():
-    global x_jogador, z_jogador, x_obs, y_obs
+    global obs, alv, aux
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity() 
@@ -170,8 +173,8 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(x_jogador, 5, z_jogador, 
-    x_obs, y_obs, 0,
+    gluLookAt(obs.x, obs.y, obs.z, 
+    alv.x, alv.y, alv.z,
      0, 1.0, 0) 
  
 # **********************************************************************
@@ -197,8 +200,8 @@ def reshape(w: int, h: int):
 # *************************************************ic*********************
 def DefineLuz():
     # Define cores para um objeto dourado
-    LuzAmbiente = [0.5, 0.5, 0.5] 
-    LuzDifusa   = [0.7, 0.7, 0.7]
+    LuzAmbiente = [0.2, 0.2, 0.2] 
+    LuzDifusa   = [0.8, 0.3, 0.4]
     LuzEspecular = [0.9, 0.9, 0.9]
     PosicaoLuz0  = [2.0, 3.0, 0.0 ]  # Posicao da Luz
     Especularidade = [1.0, 1.0, 1.0]
@@ -238,6 +241,14 @@ def DesenhaCubo():
     
     glutSolidCube(1)
 
+# def DesenhaCilindro():
+#     gluCylinder(0.5,0.5,0.5,0.5,0.5)
+
+
+def DesenhaRetangulo():
+    glScaled(2,0.6,1)
+    DesenhaCuboTex()
+    
 
 def DesenhaCuboTex():
     glColor3f(1,1,1)
@@ -338,6 +349,28 @@ def DesenhaLadrilho():
     glVertex3f( 0.5,  0.0, -0.5)
     glEnd()
 
+# **********************************************************************
+def DesenhaCanhao():
+    glPushMatrix()
+    
+    glColor3f(1,1,1)
+    #Desenha base do Canhão
+    glTranslated(0,0.5,0)
+    DesenhaRetangulo()
+
+    glColor3f(0.4,0.8,0.5)
+    #Desenha cubo em cima do Canhão
+    glTranslated(0.2,1,0)
+    glScaled(0.3,1,0.6)
+    DesenhaCuboTex()
+
+    UseTexture(2)
+    #Desenha cano do Canhão
+    glScaled(1,0.7,0.5)
+    glTranslated(-1.5,0,0)
+    DesenhaRetangulo()
+
+    glPopMatrix()
 
 # **********************************************************************
 def DesenhaMuro():
@@ -352,7 +385,11 @@ def DesenhaMuro():
         glPopMatrix()
         glTranslated(0,0,1)
     glPopMatrix()
-    
+
+# **********************************************************************
+
+
+
 # **********************************************************************
 def DesenhaPiso():
     glPushMatrix()
@@ -387,15 +424,18 @@ def display():
     DesenhaMuro()
     UseTexture(-1)
 
+    # DesenhaCanhao()
+
     # Desenha um cubo vermelho à esquerda
-    # glColor3f(0.5,0.0,0.0) # Vermelho
-    # glPushMatrix()
-    # glTranslatef(-2,0,0)
-    # glRotatef(Angulo,0,1,0)
-    # DesenhaCubo()
-    # P = CalculaPonto(Ponto(0,0,0))
-    # P.imprime("Centro do Cubo da Esquerda:")
-    # glPopMatrix()
+    glColor3f(0.5,0.0,0.0) # Vermelho
+    glPushMatrix()
+    glTranslatef(-2,0,0)
+
+    DesenhaCanhao()
+    UseTexture(-1)
+    glPopMatrix()
+
+    
     
     # Desenha um cubo amarelo à direita
     # glColor3f(0.5,0.5,0.0) # Amarelo
@@ -446,7 +486,7 @@ def animate():
 # **********************************************************************
 ESCAPE = b'\x1b'
 def keyboard(*args):
-    global image, x_obs, y_obs
+    global image, obs, alv, aux
     #print (args)
     # If escape is pressed, kill everything.
 
@@ -460,16 +500,40 @@ def keyboard(*args):
         image.show()
 
     if args[0] == b'a':
-        x_obs-=1
+        # aux = (obs - alv)
+        # aux.versor()
+        # obs = obs - aux*0.25
+        # alv = alv - aux*0.25
+        obs.x -= 1
 
     if args[0] == b'd':
-        x_obs+=1
+        # aux = (obs - alv)
+        # aux.versor()
+        # obs = obs - aux*0.25
+        # alv = alv - aux*0.25
+        obs.x += 1
     
     if args[0] == b'w':
-        y_obs+=1
+        # aux = (obs - alv)
+        # aux.versor()
+        # obs = obs - aux*0.25
+        # alv = alv - aux*0.25
+        obs.z += 1
+
 
     if args[0] == b's':
-        y_obs-=1
+        obs.z -= 1
+        # aux = (obs - alv)
+        # aux.versor()
+        # obs = obs - aux*0.25
+        # alv = alv - aux*0.25
+
+    if args[0] == b'p':
+        obs.y -= 0.5
+    
+    if args[0] == b'o':
+        obs.y += 0.5
+
     # ForÃ§a o redesenho da tela
     glutPostRedisplay()
 
@@ -480,13 +544,25 @@ def keyboard(*args):
 def arrow_keys(a_keys: int, x: int, y: int):
     global x_jogador, z_jogador
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        z_jogador+=1
+        aux = (obs - alv)
+        aux.versor()
+        obs = obs - aux*0.25
+        alv = alv - aux*0.25
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        z_jogador-=1
+        aux = (obs - alv)
+        aux.versor()
+        obs = obs - aux*0.25
+        alv = alv - aux*0.25
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        x_jogador-=1
+        aux = (obs - alv)
+        aux.versor()
+        obs = obs - aux*0.25
+        alv = alv - aux*0.25
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        x_jogador+=1
+        aux = (obs - alv)
+        aux.versor()
+        obs = obs - aux*0.25
+        alv = alv - aux*0.25
 
     glutPostRedisplay()
 
