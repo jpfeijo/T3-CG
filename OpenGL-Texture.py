@@ -31,6 +31,7 @@ from Ponto import Ponto
 import numpy as np
 from PIL import Image
 import time
+import math
 
 rotacaoCanhao = int(0)
 rotacaoCanoY = int(0)
@@ -173,7 +174,7 @@ def PosicUser():
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     # gluLookAt(posicCanhao.x + 4, posicCanhao.y+2, posicCanhao.z, 
-    # 0, rotacaoCanoY, rotacaoCanoZ,
+    # 0, 0, 0,
     #  0, 1.0, 0) 
     # gluLookAt(3, 3, 3, 
     # posicCanhao.x,posicCanhao.y, posicCanhao.z,
@@ -237,17 +238,6 @@ def DefineLuz():
     # Quanto maior o valor do Segundo parametro, mais
     # concentrado serah o brilho. (Valores validos: de 0 a 128)
     glMateriali(GL_FRONT,GL_SHININESS,51)
-
-
-def RotacionaAoRedorDePontoZ(alfa, p: Ponto):
-    glTranslatef(p.x,p.y,p.z)
-    glRotatef(alfa, 0,0,1)
-    glTranslatef(-p.x, -p.y, -p.z)
-
-def RotacionaAoRedorDePontoY(alfa, p: Ponto):
-    glTranslatef(p.x,p.y,p.z)
-    glRotatef(alfa, 0,1,0)
-    glTranslatef(-p.x, -p.y, -p.z)
 
 # **********************************************************************
 # DesenhaCubo()
@@ -377,7 +367,8 @@ def DesenhaCanhao():
     UseTexture(2)
     
     #Desenha base do Canhão
-    RotacionaAoRedorDePontoY(rotacaoCanhao, posicCanhao)
+    glRotatef(rotacaoCanhao, 0,1,0)
+
     DesenhaRetangulo()
 
     #Desenha cubo em cima do Canhão
@@ -389,9 +380,9 @@ def DesenhaCanhao():
 
     #Desenha cano do Canhão
     glTranslated(-0.2 , 1.1, 0)
-    RotacionaAoRedorDePontoY(rotacaoCanoY, Ponto(posicCanhao.x + 0.2, posicCanhao.y - 1.1, posicCanhao.z))
-    RotacionaAoRedorDePontoZ(rotacaoCanoZ, Ponto(posicCanhao.x + 0.2, posicCanhao.y - 1.1, posicCanhao.z))
-    glScaled(0.3, 0.4, 0.1)
+    glRotatef(rotacaoCanoY, 0,1,0)
+    glRotatef(rotacaoCanoZ, 0, 0, 1)
+    glScaled(0.3, 0.3, 0.1)
     DesenhaRetangulo()
     
 
@@ -525,17 +516,18 @@ def keyboard(*args):
         image.show()
 
     if args[0] == b'a':
-        rotacaoCanhao -= 1
+        rotacaoCanhao += 2
 
     if args[0] == b'd':
-        rotacaoCanhao += 1
+        rotacaoCanhao -= 2
     
     if args[0] == b'w':
-        posicCanhao.x -= 1
-
+        posicCanhao.x -= math.cos(rotacaoCanhao * math.pi / 180)
+        posicCanhao.z -= -math.sin(rotacaoCanhao * math.pi / 180)
 
     if args[0] == b's':
-        posicCanhao.x += 1
+        posicCanhao.x += math.cos(rotacaoCanhao * math.pi / 180)
+        posicCanhao.z += -math.sin(rotacaoCanhao * math.pi / 180)
 
     if args[0] == b'p':
         posicCanhao.y -= 0.5
@@ -553,13 +545,13 @@ def keyboard(*args):
 def arrow_keys(a_keys: int, x: int, y: int):
     global rotacaoCanoY, rotacaoCanoZ
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        rotacaoCanoY+=0.1
+        rotacaoCanoZ-=1
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        rotacaoCanoY-=0.1
+        rotacaoCanoZ+=1
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        rotacaoCanoZ+=0.1
+        rotacaoCanoY+=1
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        rotacaoCanoZ-=0.1
+        rotacaoCanoY-=1
 
     glutPostRedisplay()
 
