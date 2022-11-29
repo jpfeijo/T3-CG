@@ -34,8 +34,7 @@ import time
 import math
 
 rotacaoCanhao = int(0)
-rotacaoCanoY = int(0)
-rotacaoCanoZ = int(0)
+rotacaoCano = int(0)
 posicCanhao = Ponto(6,0,2)
 
 Texturas = []
@@ -165,7 +164,7 @@ def init():
 #
 # **********************************************************************
 def PosicUser():
-    global posicCanhao, rotacaoCanoY, rotacaoCanoZ
+    global posicCanhao,rotacaoCano
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity() 
@@ -173,15 +172,15 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    # gluLookAt(posicCanhao.x + 4, posicCanhao.y+2, posicCanhao.z, 
-    # 0, 0, 0,
+    # gluLookAt(posicCanhao.x + 10, posicCanhao.y+2, posicCanhao.z, 
+    # posicCanhao.x, posicCanhao.y, posicCanhao.z,
     #  0, 1.0, 0) 
-    # gluLookAt(3, 3, 3, 
-    # posicCanhao.x,posicCanhao.y, posicCanhao.z,
-    #  0, 1.0, 0) 
-    gluLookAt(20, 5, 10, 
-    posicCanhao.x, posicCanhao.y, posicCanhao.z,
+    gluLookAt(3, 3, 3, 
+    posicCanhao.x,posicCanhao.y, posicCanhao.z,
      0, 1.0, 0) 
+    # gluLookAt(20, 5, 10, 
+    # posicCanhao.x, posicCanhao.y, posicCanhao.z,
+    #  0, 1.0, 0) 
  
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -207,7 +206,7 @@ def reshape(w: int, h: int):
 def DefineLuz():
     # Define cores para um objeto dourado
     LuzAmbiente = [0.2, 0.2, 0.2] 
-    LuzDifusa   = [0.8, 0.3, 0.4]
+    LuzDifusa   = [1, 1, 1]
     LuzEspecular = [0.9, 0.9, 0.9]
     PosicaoLuz0  = [2.0, 3.0, 0.0 ]  # Posicao da Luz
     Especularidade = [1.0, 1.0, 1.0]
@@ -362,7 +361,7 @@ def DesenhaLadrilho():
 
 # **********************************************************************
 def DesenhaCanhao():
-    global rotacaoCanoY, rotacaoCanoZ, rotacaoCanhao
+    global rotacaoCano, rotacaoCanhao
     glPushMatrix()
     UseTexture(2)
     
@@ -380,8 +379,7 @@ def DesenhaCanhao():
 
     #Desenha cano do Canhão
     glTranslated(-0.2 , 1.1, 0)
-    glRotatef(rotacaoCanoY, 0,1,0)
-    glRotatef(rotacaoCanoZ, 0, 0, 1)
+    glRotatef(rotacaoCano, 0, 0, 1)
     glScaled(0.3, 0.3, 0.1)
     DesenhaRetangulo()
     
@@ -426,7 +424,7 @@ def DesenhaPiso():
 # Funcao que exibe os desenhos na tela
 # **********************************************************************
 def display():
-    global Angulo, posicCanhao
+    global Angulo, posicCanhao, rotacaoCano
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     DefineLuz()
@@ -442,6 +440,7 @@ def display():
     # Desenha o canhão
     glPushMatrix()
     glTranslated(posicCanhao.x,posicCanhao.y,posicCanhao.z)
+
 
     DesenhaCanhao()
     UseTexture(-1)
@@ -516,10 +515,10 @@ def keyboard(*args):
         image.show()
 
     if args[0] == b'a':
-        rotacaoCanhao += 2
+        rotacaoCanhao += 1
 
     if args[0] == b'd':
-        rotacaoCanhao -= 2
+        rotacaoCanhao -= 1
     
     if args[0] == b'w':
         posicCanhao.x -= math.cos(rotacaoCanhao * math.pi / 180)
@@ -543,15 +542,17 @@ def keyboard(*args):
 # **********************************************************************
 
 def arrow_keys(a_keys: int, x: int, y: int):
-    global rotacaoCanoY, rotacaoCanoZ
+    global rotacaoCano
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        rotacaoCanoZ-=1
+        if rotacaoCano > -50:    
+            rotacaoCano-=1
+        
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        rotacaoCanoZ+=1
-    if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        rotacaoCanoY+=1
-    if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        rotacaoCanoY-=1
+        if rotacaoCano < 15:
+            rotacaoCano+=1
+    # if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
+
+    # if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
 
     glutPostRedisplay()
 
