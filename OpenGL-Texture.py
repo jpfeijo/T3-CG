@@ -32,13 +32,10 @@ import numpy as np
 from PIL import Image
 import time
 
-rotacaoYcanhao = 0
-rotacaoZcanhao = 0
+rotacaoYcanhao = int(0)
+rotacaoZcanhao = int(0)
 posicCanhao = Ponto(6,0,2)
 
-obs = Ponto(-2,2,4)
-alv = Ponto(0,0,0)
-aux = Ponto(0,0,0)
 Texturas = []
 Angulo = 0.0
 # ***********************************************
@@ -174,8 +171,11 @@ def PosicUser():
 
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
-    gluLookAt(posicCanhao.x + 4, posicCanhao.y+2, posicCanhao.z, 
-    0, rotacaoYcanhao, rotacaoZcanhao,
+    # gluLookAt(posicCanhao.x + 4, posicCanhao.y+2, posicCanhao.z, 
+    # 0, rotacaoYcanhao, rotacaoZcanhao,
+    #  0, 1.0, 0) 
+    gluLookAt(3, 3, 3, 
+    posicCanhao.x,posicCanhao.y, posicCanhao.z,
      0, 1.0, 0) 
  
 # **********************************************************************
@@ -234,6 +234,12 @@ def DefineLuz():
     # concentrado serah o brilho. (Valores validos: de 0 a 128)
     glMateriali(GL_FRONT,GL_SHININESS,51)
 
+
+def RotacionaAoRedorDePonto(alfa, p: Ponto):
+    glTranslated(p.x,p.y,p.z)
+    glRotatef(alfa, 0,0,1)
+    glTranslatef(-p.x, -p.y, -p.z)
+
 # **********************************************************************
 # DesenhaCubo()
 # Desenha o cenario
@@ -247,6 +253,7 @@ def DesenhaCubo():
 
 def DesenhaProjetil():
 
+    glScaled(0.1,0.1,0.1)
     glutSolidSphere(2, 10, 10)
 
 
@@ -356,6 +363,7 @@ def DesenhaLadrilho():
 
 # **********************************************************************
 def DesenhaCanhao():
+    global rotacaoYcanhao, rotacaoZcanhao
     glPushMatrix()
     UseTexture(2)
     
@@ -372,7 +380,9 @@ def DesenhaCanhao():
     #Desenha cano do Canhão
     glScaled(0.8, 0.5, 0.2)
     glTranslated(-1.5 , 0.3, 0)
+    RotacionaAoRedorDePonto(rotacaoYcanhao, )
     DesenhaRetangulo()
+    
 
     glPopMatrix()
 
