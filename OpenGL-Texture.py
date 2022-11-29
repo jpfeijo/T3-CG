@@ -32,8 +32,9 @@ import numpy as np
 from PIL import Image
 import time
 
-rotacaoYcanhao = int(0)
-rotacaoZcanhao = int(0)
+rotacaoCanhao = int(0)
+rotacaoCanoY = int(0)
+rotacaoCanoZ = int(0)
 posicCanhao = Ponto(6,0,2)
 
 Texturas = []
@@ -163,7 +164,7 @@ def init():
 #
 # **********************************************************************
 def PosicUser():
-    global posicCanhao, rotacaoYcanhao, rotacaoZcanhao
+    global posicCanhao, rotacaoCanoY, rotacaoCanoZ
 
     glMatrixMode(GL_PROJECTION)
     glLoadIdentity() 
@@ -172,10 +173,13 @@ def PosicUser():
     glMatrixMode(GL_MODELVIEW)
     glLoadIdentity()
     # gluLookAt(posicCanhao.x + 4, posicCanhao.y+2, posicCanhao.z, 
-    # 0, rotacaoYcanhao, rotacaoZcanhao,
+    # 0, rotacaoCanoY, rotacaoCanoZ,
     #  0, 1.0, 0) 
-    gluLookAt(3, 3, 3, 
-    posicCanhao.x,posicCanhao.y, posicCanhao.z,
+    # gluLookAt(3, 3, 3, 
+    # posicCanhao.x,posicCanhao.y, posicCanhao.z,
+    #  0, 1.0, 0) 
+    gluLookAt(20, 5, 10, 
+    posicCanhao.x, posicCanhao.y, posicCanhao.z,
      0, 1.0, 0) 
  
 # **********************************************************************
@@ -235,9 +239,14 @@ def DefineLuz():
     glMateriali(GL_FRONT,GL_SHININESS,51)
 
 
-def RotacionaAoRedorDePonto(alfa, p: Ponto):
-    glTranslated(p.x,p.y,p.z)
+def RotacionaAoRedorDePontoZ(alfa, p: Ponto):
+    glTranslatef(p.x,p.y,p.z)
     glRotatef(alfa, 0,0,1)
+    glTranslatef(-p.x, -p.y, -p.z)
+
+def RotacionaAoRedorDePontoY(alfa, p: Ponto):
+    glTranslatef(p.x,p.y,p.z)
+    glRotatef(alfa, 0,1,0)
     glTranslatef(-p.x, -p.y, -p.z)
 
 # **********************************************************************
@@ -363,24 +372,26 @@ def DesenhaLadrilho():
 
 # **********************************************************************
 def DesenhaCanhao():
-    global rotacaoYcanhao, rotacaoZcanhao
+    global rotacaoCanoY, rotacaoCanoZ, rotacaoCanhao
     glPushMatrix()
     UseTexture(2)
     
-    glColor3f(1,1,1)
     #Desenha base do Canhão
+    RotacionaAoRedorDePontoY(rotacaoCanhao, posicCanhao)
     DesenhaRetangulo()
 
-    glColor3f(0.8,0.8,0.5)
     #Desenha cubo em cima do Canhão
+    glPushMatrix()
     glTranslated(0.2, 1, 0)
     glScaled(0.3, 1, 0.6)
     DesenhaCuboTex()
+    glPopMatrix()
 
     #Desenha cano do Canhão
-    glScaled(0.8, 0.5, 0.2)
-    glTranslated(-1.5 , 0.3, 0)
-    RotacionaAoRedorDePonto(rotacaoYcanhao, )
+    glTranslated(-0.2 , 1.1, 0)
+    RotacionaAoRedorDePontoY(rotacaoCanoY, Ponto(posicCanhao.x + 0.2, posicCanhao.y - 1.1, posicCanhao.z))
+    RotacionaAoRedorDePontoZ(rotacaoCanoZ, Ponto(posicCanhao.x + 0.2, posicCanhao.y - 1.1, posicCanhao.z))
+    glScaled(0.3, 0.4, 0.1)
     DesenhaRetangulo()
     
 
@@ -500,7 +511,7 @@ def animate():
 # **********************************************************************
 ESCAPE = b'\x1b'
 def keyboard(*args):
-    global image, posicCanhao
+    global image, posicCanhao, rotacaoCanhao
     #print (args)
     # If escape is pressed, kill everything.
 
@@ -514,33 +525,17 @@ def keyboard(*args):
         image.show()
 
     if args[0] == b'a':
-        # aux = (obs - alv)
-        # aux.versor()
-        # obs = obs - aux*0.25
-        # alv = alv - aux*0.25
-        posicCanhao.z += 1
+        rotacaoCanhao -= 1
 
     if args[0] == b'd':
-        # aux = (obs - alv)
-        # aux.versor()
-        # obs = obs - aux*0.25
-        # alv = alv - aux*0.25
-        posicCanhao.z -= 1
+        rotacaoCanhao += 1
     
     if args[0] == b'w':
-        # aux = (obs - alv)
-        # aux.versor()
-        # obs = obs - aux*0.25
-        # alv = alv - aux*0.25
         posicCanhao.x -= 1
 
 
     if args[0] == b's':
         posicCanhao.x += 1
-        # aux = (obs - alv)
-        # aux.versor()
-        # obs = obs - aux*0.25
-        # alv = alv - aux*0.25
 
     if args[0] == b'p':
         posicCanhao.y -= 0.5
@@ -556,15 +551,15 @@ def keyboard(*args):
 # **********************************************************************
 
 def arrow_keys(a_keys: int, x: int, y: int):
-    global rotacaoYcanhao, rotacaoZcanhao
+    global rotacaoCanoY, rotacaoCanoZ
     if a_keys == GLUT_KEY_UP:         # Se pressionar UP
-        rotacaoYcanhao+=1
+        rotacaoCanoY+=0.1
     if a_keys == GLUT_KEY_DOWN:       # Se pressionar DOWN
-        rotacaoYcanhao-=1
+        rotacaoCanoY-=0.1
     if a_keys == GLUT_KEY_LEFT:       # Se pressionar LEFT
-        rotacaoZcanhao+=1
+        rotacaoCanoZ+=0.1
     if a_keys == GLUT_KEY_RIGHT:      # Se pressionar RIGHT
-        rotacaoZcanhao-=1
+        rotacaoCanoZ-=0.1
 
     glutPostRedisplay()
 
