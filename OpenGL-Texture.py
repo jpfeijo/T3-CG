@@ -27,6 +27,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from Ponto import Ponto
+from Bezier import *
 #from Linha import Linha
 import numpy as np
 from PIL import Image
@@ -36,6 +37,8 @@ import math
 rotacaoCanhao = int(0)
 rotacaoCano = int(0)
 posicCanhao = Ponto(6,0,2)
+
+curvaAtual = Bezier(Ponto(25, 0, 0), Ponto(0, 10, 0), Ponto(-25, 0, 0))
 
 Texturas = []
 Angulo = 0.0
@@ -434,8 +437,11 @@ def display():
 
     DesenhaPiso()
     UseTexture (-1) #desabilita o uso de texturas
+
     DesenhaMuro()
     UseTexture(-1)
+
+    curvaAtual.Traca()
 
     # Desenha o canhão
     glPushMatrix()
@@ -516,6 +522,8 @@ def keyboard(*args):
 
     if args[0] == b'a':
         rotacaoCanhao += 1
+
+
 
     if args[0] == b'd':
         rotacaoCanhao -= 1
