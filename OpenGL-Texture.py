@@ -27,6 +27,7 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from Ponto import Ponto
+from Bezier import *
 #from Linha import Linha
 import numpy as np
 from PIL import Image
@@ -36,6 +37,8 @@ import math
 rotacaoCanhao = int(0)
 rotacaoCano = int(0)
 posicCanhao = Ponto(20, 0, -8)
+
+curvaAtual = Bezier(Ponto(25, 0, 0), Ponto(0, 10, 0), Ponto(-25, 0, 0))
 
 Texturas = []
 Angulo = 0.0
@@ -440,6 +443,9 @@ def display():
     # Desenha o canhão
     glPushMatrix()
     glTranslated(posicCanhao.x,posicCanhao.y,posicCanhao.z)
+
+    curvaAtual.Traca()
+
 
 
     DesenhaCanhao()
