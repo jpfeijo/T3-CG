@@ -27,7 +27,6 @@ from OpenGL.GL import *
 from OpenGL.GLUT import *
 from OpenGL.GLU import *
 from Ponto import Ponto
-from Bezier import *
 #from Linha import Linha
 import numpy as np
 from PIL import Image
@@ -36,9 +35,7 @@ import math
 
 rotacaoCanhao = int(0)
 rotacaoCano = int(0)
-posicCanhao = Ponto(6,0,2)
-
-curvaAtual = Bezier(Ponto(25, 0, 0), Ponto(0, 10, 0), Ponto(-25, 0, 0))
+posicCanhao = Ponto(20, 0, -8)
 
 Texturas = []
 Angulo = 0.0
@@ -178,12 +175,12 @@ def PosicUser():
     # gluLookAt(posicCanhao.x + 10, posicCanhao.y+2, posicCanhao.z, 
     # posicCanhao.x, posicCanhao.y, posicCanhao.z,
     #  0, 1.0, 0) 
-    gluLookAt(3, 3, 3, 
-    posicCanhao.x,posicCanhao.y, posicCanhao.z,
-     0, 1.0, 0) 
-    # gluLookAt(20, 5, 10, 
-    # posicCanhao.x, posicCanhao.y, posicCanhao.z,
+    # gluLookAt(3, 3, 3, 
+    # posicCanhao.x,posicCanhao.y, posicCanhao.z,
     #  0, 1.0, 0) 
+    gluLookAt(30, 5, -8, 
+    0,5,-8,
+     0, 1.0, 0) 
  
 # **********************************************************************
 #  reshape( w: int, h: int )
@@ -209,7 +206,7 @@ def reshape(w: int, h: int):
 def DefineLuz():
     # Define cores para um objeto dourado
     LuzAmbiente = [0.2, 0.2, 0.2] 
-    LuzDifusa   = [1, 1, 1]
+    LuzDifusa   = [0.9, 0.9, 1]
     LuzEspecular = [0.9, 0.9, 0.9]
     PosicaoLuz0  = [2.0, 3.0, 0.0 ]  # Posicao da Luz
     Especularidade = [1.0, 1.0, 1.0]
@@ -254,7 +251,7 @@ def DesenhaCubo():
 
 def DesenhaProjetil():
 
-    glScaled(0.1,0.1,0.1)
+    glScaled(0.1,0.07,0.07)
     glutSolidSphere(2, 10, 10)
 
 
@@ -437,11 +434,8 @@ def display():
 
     DesenhaPiso()
     UseTexture (-1) #desabilita o uso de texturas
-
     DesenhaMuro()
     UseTexture(-1)
-
-    curvaAtual.Traca()
 
     # Desenha o canhão
     glPushMatrix()
@@ -522,8 +516,6 @@ def keyboard(*args):
 
     if args[0] == b'a':
         rotacaoCanhao += 1
-
-
 
     if args[0] == b'd':
         rotacaoCanhao -= 1
