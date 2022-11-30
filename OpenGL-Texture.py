@@ -37,6 +37,11 @@ import math
 rotacaoCanhao = int(0)
 rotacaoCano = int(0)
 posicCanhao = Ponto(20, 0, -8)
+posicCano = Ponto(0,0,0)
+
+dirCanhao = Ponto(-1,0,0)
+
+forca = 10
 
 curvaAtual = Bezier(Ponto(25, 0, 0), Ponto(0, 10, 0), Ponto(-25, 0, 0))
 
@@ -364,7 +369,7 @@ def DesenhaLadrilho():
 
 # **********************************************************************
 def DesenhaCanhao():
-    global rotacaoCano, rotacaoCanhao
+    global rotacaoCano, rotacaoCanhao, posicCano, posicCanhao
     glPushMatrix()
     UseTexture(2)
     
@@ -385,6 +390,8 @@ def DesenhaCanhao():
     glRotatef(rotacaoCano, 0, 0, 1)
     glScaled(0.3, 0.3, 0.1)
     DesenhaRetangulo()
+
+    posicCano = posicCanhao + Ponto(-0.2, 1.1, 0)
     
 
     glPopMatrix()
@@ -427,7 +434,7 @@ def DesenhaPiso():
 # Funcao que exibe os desenhos na tela
 # **********************************************************************
 def display():
-    global Angulo, posicCanhao, rotacaoCano
+    global Angulo, posicCanhao, rotacaoCano, dirCanhao, forca, posicCano, rotacaoCanhao, rotacaoCano
     # Limpa a tela com  a cor de fundo
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
     DefineLuz()
@@ -437,25 +444,37 @@ def display():
 
     DesenhaPiso()
     UseTexture (-1) #desabilita o uso de texturas
-    DesenhaMuro()
+    #DesenhaMuro()
     UseTexture(-1)
 
+    curvaAtual.Traca()
     # Desenha o canhão
     glPushMatrix()
     glTranslated(posicCanhao.x,posicCanhao.y,posicCanhao.z)
 
-    curvaAtual.Traca()
-
-
-
     DesenhaCanhao()
     UseTexture(-1)
+    
+    b = posicCano + dirCanhao * forca
+
+    distancia = 2 * forca * math.cos(rotacaoCano * 3.14/180)
+    c = posicCano + Ponto(distancia,0,0)
+    glColor3f(1, 0, 0)
+    glRotatef(rotacaoCano, 0, 0, 1)
+    glRotatef(rotacaoCanhao, 0, 1, 0)
+    glTranslated(b.x, b.y, b.z)
+    
+    DesenhaProjetil()
+
+    glTranslated(c.x, c.y, c.z)
+    DesenhaProjetil()
+
+
     glPopMatrix()
 
     # glScaled(0.2, 0.2, 0.2)
-    glTranslated(6,2,2)
-    glColor3f(1, 0.3, 0.4)
-    DesenhaProjetil()
+    b = posicCano + dirCanhao * forca
+    #glTranslated(6,2,2)
     
     
     # Desenha um cubo amarelo à direita
@@ -507,7 +526,7 @@ def animate():
 # **********************************************************************
 ESCAPE = b'\x1b'
 def keyboard(*args):
-    global image, posicCanhao, rotacaoCanhao
+    global image, posicCanhao, rotacaoCanhao, dirCanhao
     #print (args)
     # If escape is pressed, kill everything.
 
@@ -522,6 +541,7 @@ def keyboard(*args):
 
     if args[0] == b'a':
         rotacaoCanhao += 1
+
 
     if args[0] == b'd':
         rotacaoCanhao -= 1
